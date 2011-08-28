@@ -19,11 +19,12 @@ namespace {
   EXPECT_DEATH(Window(b, 0, 0), ".*");
  }
 
+ // Tests death, if buffer is NULL.
  TEST(WindowTest, NullBufferDeath) {
   EXPECT_DEATH(Window(0, 0, 0), ".*");
  }
 
- // Tests that window can occupy the whole buffer
+ // Tests that window can occupy the whole buffer.
  TEST(WindowTest, FullBufferWindow) {
   Buffer* b = new Buffer(10);
   Window w(b, 0, 10);
