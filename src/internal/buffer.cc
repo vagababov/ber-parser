@@ -1,4 +1,6 @@
 #include "buffer.h"
+
+#include <algorithm>
 #include <glog/logging.h>
 
 namespace ber {
@@ -10,7 +12,6 @@ Buffer::Buffer(int size)
       ref_count_(1) {
   CHECK_GT(size, 0) << "Size must be positive";
 }
-
 
 Buffer::Buffer(char* data, int size)
   : size_(size),
@@ -34,6 +35,20 @@ void Buffer::Unref() {
   }
 }
 
+Buffer* Buffer::Clone() const {
+  Buffer* ret = new Buffer(size());
+  memcpy(ret->data(), data_, size());
+  return ret;
+}
+
+void Buffer::Initialize(char val) {
+  memset(data_, val, size_);
+}
+
+void Buffer::CopyFrom(char* data, size_t num) {
+  CHECK_NOTNULL(data);
+  memcpy(data_, data, std::min<size_t>(num, size_));
+}
 
 }  // namespace internal
 }  // namespace ber

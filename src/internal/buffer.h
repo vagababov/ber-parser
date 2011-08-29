@@ -17,8 +17,23 @@ class Buffer {
   Buffer(int size);
   Buffer(char* data, int size);
 
+  // Increments ref counter.
   void Ref();
+
+  // Decrements ref counter. If it's 0 or negative -- deletes 'this'.
   void Unref();
+
+  // Returns identical buffer with identical contents.
+  // The caller takes ownership of the Buffer object.
+  Buffer* Clone() const;
+
+  // Copies the contents from the given data buffer.
+  // Buffer will copy min(size, num) bytes.
+  void CopyFrom(char* data, size_t num);
+
+  // Initializes the data buffer with given value.
+  void Initialize(char val = 0);
+
   char* data() { return data_; }
   const char* data() const { return data_; }
   int size() const { return size_; }

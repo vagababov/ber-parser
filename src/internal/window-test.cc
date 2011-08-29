@@ -85,6 +85,46 @@ namespace {
   EXPECT_DEATH(w.ReadByte(7), ".*");
  }
 
+ TEST(WindowTest, CreatePortWindow) {
+  Buffer* b = new Buffer(10);
+  Window w(b, 0, 10);
+  Window* port = w.CreatePortWindow(1, 9);
+  EXPECT_NE(static_cast<Window*>(NULL), port);
+  EXPECT_EQ(9, port->width());
+  delete port;
+
+  port = w.CreatePortWindow(5, 3);
+  EXPECT_NE(static_cast<Window*>(NULL), port);
+  EXPECT_EQ(3, port->width());
+  EXPECT_EQ(w.buffer(), port->buffer());
+  delete port;
+ }
+
+TEST(WindowTest, DeathOnPortWindowSameSize) {
+  Buffer* b = new Buffer(10);
+  Window w(b, 0, 10);
+  EXPECT_DEATH(w.CreatePortWindow(0, 10), ".*");
+}
+
+TEST(WindowTest, BadPortWindowParams) {
+  Buffer* b = new Buffer(10);
+  Window w(b, 0, 10);
+  // Longer than possible
+  EXPECT_DEATH(w.CreatePortWindow(5, 6), ".*");
+  EXPECT_DEATH(w.CreatePortWindow(5, 10), ".*");
+  // 0 length.
+  EXPECT_DEATH(w.CreatePortWindow(1, 0), ".*");
+}
+
+TEST(WindowTest, TestClone) {
+  Buffer* b = new Buffer(10);
+  Window w1(b, 1, 9);
+  Window* w2 = w1.Clone();
+  EXPECT_NE(static_cast<Window*>(NULL), w2);
+  EXPECT_EQ(w1.width(), w2->width());
+  EXPECT_EQ(w1.buffer(), w2->buffer());
+}
+
 }  // namespace
 
 int main(int argc, char** argv) {

@@ -4,7 +4,7 @@ CXXFLAGS += -Wall -Wextra
 
 LIBS = -lgflags -lglog
 LIBRARIES = buffer.o window.o
-TESTS = window-test
+TESTS = window-test buffer-test
 BIN_DIR = ../obj
 
 # GTest related definitions.
@@ -44,7 +44,12 @@ gtest-main.a: gtest-main.o
 	$(AR) $(ARFLAGS) $(BIN_DIR)/$@ $^
 
 
-window-test : window.o buffer.o gtest-all.a 
+buffer-test : buffer.o gtest-all.a
+	$(CXX) -I$(GTEST_INCLUDES) $(CXXFLAGS) $(CPPFLAGS)\
+			$(INTERNAL_DIR)/buffer-test.cc $(addprefix $(BIN_DIR)/, $^) $(LIBS) -lpthread\
+      -o $(BIN_DIR)/$@
+
+window-test : window.o buffer.o gtest-all.a
 	$(CXX) -I$(GTEST_INCLUDES) $(CXXFLAGS) $(CPPFLAGS)\
 			$(INTERNAL_DIR)/window-test.cc $(addprefix $(BIN_DIR)/, $^) $(LIBS) -lpthread\
       -o $(BIN_DIR)/$@

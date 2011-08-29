@@ -17,6 +17,7 @@ class Window {
  public:
   // Creates a window with a given buffer from given offset with given width.
   // The buffer must be already Ref'ed.
+  // offset is relative to the buffer.
   // Will fail on constraint violations.
   Window(Buffer* buf, size_t offset, size_t width);
   ~Window();
@@ -42,13 +43,19 @@ class Window {
   // Window is created from a given origin window with offset and width as
   // specified. Offset is the offset in regards to the origin window.
   // Will fail if parameters don't make sense.
-  static Window* CreatePortWindow(const Window& origin,
-                                  size_t offset, size_t width);
+  // Will fail if port window has same size. Use close to create view on the
+  // same window.
+  Window* CreatePortWindow(size_t offset, size_t width) const;
+
+  // Creates a clone of this window.
+  Window* Clone() const;
 
   // Returns the width of the window.
   int width() const { return end_ - offset_; }
-private:
-  Window* CreatePortWindow(size_t offset, size_t width) const;
+
+  const Buffer* buffer() const { return buffer_; }
+
+ private:
 
  // "Owned" in the sense that Window will unref, when done.
  mutable Buffer* buffer_;
